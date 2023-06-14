@@ -12,6 +12,10 @@
 
 ![Calculator Demo](calculator_demo.png)
 
+### State(Redis)
+
+![redis](dapr_redis_state.png)
+
 ### Tracing
 
 ![zipkin](dapr_zipkin.png)
