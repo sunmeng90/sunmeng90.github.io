@@ -1,9 +1,28 @@
 # Dapr
+
 ## Introduction
 
 ## Demo Part2 - k8s
 
-## Service Mesh V.S. Dapr 
+### Architecure
+
+![Calculator Archchitecture](Calculator_Architecture_Diagram.png)
+
+### Demo
+
+![Calculator Demo](calculator_demo.png)
+
+### Tracing
+
+![zipkin](dapr_zipkin.png)
+
+### K8s pods
+
+![pods](dapr_k8s_pods.png)
+
+
+## Service Mesh V.S. Dapr
+
 Both dapr and service mesh(istio) follow a side-car archeticture, and they offer some overlapping capabilities. but Dapr is not a service mesh. 
 
 ![Dapr and Service Mesh Overlapping in distributed Application](https://docs.dapr.io/images/service-mesh.png)
@@ -18,8 +37,7 @@ Both dapr and service mesh(istio) follow a side-car archeticture, and they offer
 As Service Mesh and Dapr works at a different level, both can work together in the same application. For example, a service mesh could provide networking communication between services. Dapr could provide application services such as state management or actor services.
 ![app that implements both service-mesh and dapr](https://learn.microsoft.com/en-us/dotnet/architecture/dapr-for-net-developers/media/dapr-at-20000-feet/dapr-and-service-mesh.png)
 
-
-## Challenge 
+## Challenge
 
 Currently, dapr binary and sdk is not available in firm.
 
