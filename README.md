@@ -8,6 +8,130 @@
 
 ![Calculator Archchitecture](Calculator_Architecture_Diagram.png)
 
+### Config
+
+![dapr app deploy](calculator_deploy.png)
+
+#### app config
+
+```yaml
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: appconfig
+  namespace: dapr-system
+spec:
+  tracing:
+    samplingRate: "1"
+    zipkin:
+      endpointAddress: "http://zipkin.dapr-system.svc.cluster.local:9411/api/v2/spans"
+```
+
+#### multiply app
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multiplyapp
+  namespace: dapr-system
+  labels:
+    app: multiply
+    demo: dapr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multiply
+  template:
+    metadata:
+      labels:
+        app: multiply
+        demo: dapr
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "multiplyapp"
+        dapr.io/app-port: "5001"
+        dapr.io/config: "appconfig"
+        dapr.io/log-level: "debug"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: multiply
+        image: ghcr.io/dapr/samples/distributed-calculator-slow-python:latest
+        env:
+        - name: "APP_PORT"
+          value: "5001"
+        ports:
+        - containerPort: 5001
+        imagePullPolicy: IfNotPresent
+```
+
+#### state(redis)
+
+```yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: statestore
+  namespace: dapr-system
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: redis-master.dapr-system.svc.cluster.local:6379
+  - name: redisPassword
+    value: "xxxxxx"
+```
+
+#### tracing(zipkin)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: dapr-system
+  labels:
+    app: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+        demo: dapr
+    spec:
+      containers:
+      - name: zipkin
+        image: openzipkin/zipkin
+        ports:
+        - containerPort: 9411
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: zipkin
+  labels:
+    app: zipkin
+  namespace: dapr-system
+spec:
+  selector:
+    app: zipkin
+  ports:
+  - protocol: TCP
+    port: 9411
+    targetPort: 9411
+  type: ClusterIP
+
+```
+
 ### Demo
 
 ![Calculator Demo](calculator_demo.png)
